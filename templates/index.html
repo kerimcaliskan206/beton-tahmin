@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beton Dayanımı Tahmin Sistemi</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --success: #10b981;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            max-width: 650px;
+            width: 100%;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        h2 {
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-form { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+        @media (max-width: 500px) {
+            .full-width { grid-column: span 1; }
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            text-align: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .result-title {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Beton Dayanımı Tahmin Otomasyonu</h2>
+        <p class="subtitle">Yapay Sinir Ağları (YSA) ile Çok Kriterli Malzeme Analizi</p>
+    </div>
+
+    <form action="/predict" method="POST" class="grid-form">
+        <div class="form-group">
+            <label>Çimento (kg/m³)</label>
+            <input type="number" step="any" name="cement" required value="300">
+        </div>
+        <div class="form-group">
+            <label>Yüksek Fırın Cürufu (kg/m³)</label>
+            <input type="number" step="any" name="slag" required value="0">
+        </div>
+        <div class="form-group">
+            <label>Uçucu Kül (kg/m³)</label>
+            <input type="number" step="any" name="flyash" required value="0">
+        </div>
+        <div class="form-group">
+            <label>Su Karışımı (kg/m³)</label>
+            <input type="number" step="any" name="water" required value="180">
+        </div>
+        <div class="form-group">
+            <label>Süperakışkanlaştırıcı (kg/m³)</label>
+            <input type="number" step="any" name="superplastic" required value="0">
+        </div>
+        <div class="form-group">
+            <label>Kaba Agrega (kg/m³)</label>
+            <input type="number" step="any" name="coarse" required value="900">
+        </div>
+        <div class="form-group">
+            <label>İnce Agrega (kg/m³)</label>
+            <input type="number" step="any" name="fine" required value="800">
+        </div>
+        <div class="form-group">
+            <label>Kürlenme Yaşı (Gün)</label>
+            <input type="number" step="any" name="age" required value="28">
+        </div>
+        
+        <div class="full-width">
+            <button type="submit">Modeli Çalıştır ve Tahmin Et</button>
+        </div>
+    </form>
+
+    {% if prediction %}
+    <div class="result-box">
+        <div class="result-title">Yapay Sinir Ağı Tahmin Çıktısı</div>
+        <div class="result-value">{{ prediction }} MPa</div>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
